@@ -220,7 +220,7 @@ function nova() {
   if (!confirm(`Abrir uma sessão nova no VS Code do PC?
 
 Ela nasce com o RC ligado e aparece no app do Claude.`)) return;
-  pedido("nova", "_nova", $("#novamsg"), $("#nova"), { ok: "Sessão nova aberta. Procure no app do Claude.", toast: "Sessão nova aberta", andando: "O PC está abrindo a sessão…" });
+  pedido("nova", "_nova", $("#novamsg"), $("#nova"), { ok: "Sessão nova aberta. No app do Claude, mande como 1ª mensagem: /rename Nome da sessão", toast: "Sessão nova aberta", andando: "O PC está abrindo a sessão…" });
 }
 
 function mostrarCfg() { $("#cfg").hidden = false; $("#app").hidden = true; $("#acoes").hidden = true; $("#sub").textContent = "Sessões do Claude no PC"; }
