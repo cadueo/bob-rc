@@ -220,6 +220,7 @@ footer small{color:var(--mut);font-size:12px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
+.vscode-acao{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:4px 0 14px}.vscode-acao .msg{margin:0}
 </style>
 </head>
 <body>
@@ -415,6 +416,15 @@ function desenharPC(d, velho) {
   const a = el("div", "alertas");
   alertas.forEach(([n, txt]) => { const l = el("div", "alerta" + (n === "av" ? " av" : "")); l.append(ic("alerta"), el("span", null, txt)); a.append(l); });
   pc.append(a);
+  if (m.vscode === false && !velho) {
+    const linha = el("div", "vscode-acao"), msg = el("div", "msg");
+    const bt = el("button", "bt", "Subir o VS Code");
+    bt.onclick = () => { if (confirm(`Abrir o VS Code no notebook?
+
+As sessões que estavam abertas são reabertas na mesma conversa.`)) pedido("abrir-vscode", "_vscode", { ok: "VS Code aberto. As sessões estão voltando.", toast: "VS Code aberto", andando: "O PC está abrindo o VS Code…" }); };
+    linha.append(bt, msg); pc.append(linha);
+    ui["_vscode"] = { r: msg, bs: [bt] }; pintar("_vscode");
+  }
   if (mets.length) { const g = el("div", "mets"); g.append(...mets); pc.append(g); }
 }
 
