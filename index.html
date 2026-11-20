@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bob RC">
+<meta name="theme-color" content="#f5f2ee" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#14110f" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>Bob RC</title>
+<style>
+:root{
+  --bg:#f5f2ee;--bg2:#ebe6df;--card:#ffffff;--tx:#1c1915;--mut:#7a7168;--bd:#e4ddd4;
+  --ac:#cf5b35;--ac2:#b4441f;--acx:#fff;--ok:#1e7d4f;--okbg:#e3f3ea;--warn:#a75f05;--warnbg:#fbefdc;--err:#b3261e;--errbg:#fbe5e3;
+  --sh:0 1px 2px rgba(40,25,10,.06),0 6px 20px rgba(40,25,10,.06);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#14110f;--bg2:#1c1815;--card:#221d1a;--tx:#f1ebe4;--mut:#a39a90;--bd:#352e29;
+  --ac:#e8754c;--ac2:#d35f37;--acx:#1a120d;--ok:#5fd39b;--okbg:#173126;--warn:#f0b057;--warnbg:#33260f;--err:#ff8a80;--errbg:#3a1a17;
+  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--tx)}
+body{font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
+  padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 32px);max-width:720px;margin:0 auto}
+header{display:flex;align-items:center;gap:12px;margin:8px 0 18px}
+header img{width:44px;height:44px;border-radius:11px;box-shadow:var(--sh)}
+header h1{font-size:24px;line-height:1.1;margin:0;letter-spacing:-.02em}
+header .sub{color:var(--mut);font-size:13px;margin-top:2px}
+header .acoes{margin-left:auto;display:flex;gap:6px}
+.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);display:grid;place-items:center;cursor:pointer}
+.ib svg{width:20px;height:20px}.ib.gira svg{animation:g 1s linear infinite}@keyframes g{to{transform:rotate(360deg)}}
+.busca{position:relative;margin-bottom:14px}
+.busca input{width:100%;font:inherit;padding:12px 14px 12px 40px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);outline:none}
+.busca input:focus{border-color:var(--ac)}
+.busca svg{position:absolute;left:13px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--mut)}
+.secao{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:20px 4px 8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin:8px 0;box-shadow:var(--sh);display:flex;gap:12px;align-items:center}
+.pt{width:10px;height:10px;border-radius:50%;flex:none;background:var(--bd)}
+.pt.vs{background:var(--ok);box-shadow:0 0 0 4px var(--okbg)}.pt.tm{background:var(--warn);box-shadow:0 0 0 4px var(--warnbg)}
+.card .t{flex:1;min-width:0}
+.nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{color:var(--mut);font-size:13px;margin-top:1px}
+.msg{font-size:13px;margin-top:8px;padding:6px 10px;border-radius:10px;display:none}
+.msg.on{display:block}.msg.ok{background:var(--okbg);color:var(--ok)}.msg.err{background:var(--errbg);color:var(--err)}.msg.wait{background:var(--warnbg);color:var(--warn)}
+.bt{font:inherit;font-weight:600;font-size:15px;border:0;border-radius:12px;padding:10px 16px;background:var(--ac);color:var(--acx);cursor:pointer;white-space:nowrap;min-width:92px}
+.bt:active{background:var(--ac2)}.bt:disabled{opacity:.45;cursor:default}
+.bt.sec{background:transparent;color:var(--mut);border:1px solid var(--bd);font-weight:500}
+.vazio{color:var(--mut);text-align:center;padding:30px 10px}
+.cfg{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:22px;box-shadow:var(--sh);margin-top:20px}
+.cfg h2{margin:0 0 6px;font-size:20px}.cfg p{color:var(--mut);margin:0 0 16px;font-size:14px}
+.cfg input{width:100%;font:inherit;padding:13px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);margin-bottom:12px}
+.cfg .bt{width:100%;padding:13px}
+footer{margin-top:28px;text-align:center}
+footer button{background:none;border:0;color:var(--mut);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translateX(-50%) translateY(120px);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;transition:transform .25s;max-width:90vw}
+.toast.on{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<header>
+  <img src="icon-192.png" alt="">
+  <div><h1>Bob RC</h1><div class="sub" id="sub">Sessões do Claude no PC</div></div>
+  <div class="acoes" id="acoes" hidden>
+    <button class="ib" id="recarregar" aria-label="Atualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+  </div>
+</header>
+
+<section id="cfg" class="cfg" hidden>
+  <h2>Conectar ao PC</h2>
+  <p>Cole a chave do GitHub restrita ao repositório <b>bob-rc-canal</b>. Ela fica guardada só neste aparelho.</p>
+  <input id="tok" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">
+  <button class="bt" id="salvar">Conectar</button>
+</section>
+
+<main id="app" hidden>
+  <div class="busca">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <input id="filtro" placeholder="Buscar sessão" autocomplete="off">
+  </div>
+  <div id="lista"></div>
+  <footer><button id="trocar">Trocar chave de acesso</button></footer>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const REPO = "Cadueo/bob-rc-canal";
+const $ = s => document.querySelector(s);
+const getTok = () => { try { return localStorage.getItem("bobrc_token") || ""; } catch (e) { return ""; } };
+const setTok = v => { try { localStorage.setItem("bobrc_token", v); } catch (e) {} };
+let sessoes = [], pendentes = {};
+
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+
+function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("on"), 2600); }
+
+async function gh(metodo, caminho, corpo, raw) {
+  const r = await fetch(`https://api.github.com/repos/${REPO}${caminho}`, {
+    method: metodo, cache: "no-store",
+    headers: { Authorization: `Bearer ${getTok()}`, Accept: raw ? "application/vnd.github.raw+json" : "application/vnd.github+json" },
+    body: corpo ? JSON.stringify(corpo) : undefined });
+  if (r.status === 401 || r.status === 403) throw new Error("chave recusada");
+  if (r.status === 404) throw new Error("canal ainda sem dados do PC");
+  if (!r.ok) throw new Error("GitHub respondeu " + r.status);
+  return raw ? r.text() : r.json();
+}
+
+function haQuanto(iso) {
+  const min = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (min < 1) return "agora"; if (min < 60) return `há ${min} min`;
+  const h = Math.round(min / 60); if (h < 24) return `há ${h} h`; const d = Math.round(h / 24); return d === 1 ? "ontem" : `há ${d} dias`;
+}
+
+function cartao(s) {
+  const c = document.createElement("div"); c.className = "card";
+  const pt = document.createElement("div"); pt.className = "pt" + (s.processo ? (s.onde === "claude-vscode" ? " vs" : " tm") : "");
+  const t = document.createElement("div"); t.className = "t";
+  const n = document.createElement("div"); n.className = "nome"; n.textContent = s.titulo;
+  const m = document.createElement("div"); m.className = "meta";
+  m.textContent = (s.processo ? (s.onde === "claude-vscode" ? "Rodando no VS Code" : "Rodando no terminal") : "Parada") + " · " + haQuanto(s.ultima);
+  const r = document.createElement("div"); r.className = "msg";
+  t.append(n, m, r);
+  const b = document.createElement("button"); b.className = "bt"; b.textContent = "Acordar";
+  if (!s.pode_acordar) { b.disabled = true; b.textContent = "No terminal"; }
+  if (pendentes[s.id]) { b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id]; }
+  b.onclick = () => acordar(s, b, r);
+  c.append(pt, t, b);
+  return c;
+}
+
+function desenhar() {
+  const f = $("#filtro").value.trim().toLowerCase(), el = $("#lista");
+  const vis = sessoes.filter(x => !f || x.titulo.toLowerCase().includes(f));
+  el.innerHTML = "";
+  if (!vis.length) { el.innerHTML = '<div class="vazio">Nenhuma sessão encontrada.</div>'; return; }
+  const grupos = [["No VS Code agora", vis.filter(s => s.processo)], ["Conversas recentes", vis.filter(s => !s.processo)]];
+  for (const [titulo, itens] of grupos) {
+    if (!itens.length) continue;
+    const h = document.createElement("div"); h.className = "secao"; h.textContent = titulo; el.append(h);
+    itens.forEach(s => el.append(cartao(s)));
+  }
+}
+
+async function carregar() {
+  const bt = $("#recarregar"); bt.classList.add("gira");
+  try {
+    const d = JSON.parse(await gh("GET", "/contents/sessoes.json", null, true));
+    sessoes = d.sessoes || [];
+    $("#sub").textContent = "Lista do PC " + haQuanto(d.atualizado);
+    desenhar();
+  } catch (e) {
+    $("#sub").textContent = e.message;
+    if (/chave/.test(e.message)) mostrarCfg();
+  } finally { bt.classList.remove("gira"); }
+}
+
+async function acordar(s, b, r) {
+  if (s.processo && !confirm(`"${s.titulo}" está rodando no VS Code.\n\nAcordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
+  b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id] = "Pedido enviado ao PC…";
+  try {
+    const is = await gh("POST", "/issues", { title: "acordar " + s.id, body: s.titulo });
+    for (let k = 1; k <= 60; k++) {
+      await new Promise(x => setTimeout(x, 4000));
+      const i = await gh("GET", "/issues/" + is.number);
+      if (i.state === "closed") {
+        const cs = await gh("GET", `/issues/${is.number}/comments`);
+        const txt = cs.length ? cs[cs.length - 1].body : "concluído";
+        const ok = /^OK/.test(txt);
+        delete pendentes[s.id];
+        r.className = "msg on " + (ok ? "ok" : "err");
+        r.textContent = ok ? "Acordada. Abra no app do Claude." : txt;
+        if (ok) toast(`"${s.titulo}" acordada`);
+        b.disabled = false; setTimeout(carregar, 4000); return;
+      }
+      r.textContent = pendentes[s.id] = `O PC está acordando a sessão… ${k * 4} s`;
+    }
+    r.className = "msg on err"; r.textContent = "O PC não respondeu em 4 min. O vigia está rodando?";
+  } catch (e) { r.className = "msg on err"; r.textContent = e.message; }
+  delete pendentes[s.id]; b.disabled = false;
+}
+
+function mostrarCfg() { $("#cfg").hidden = false; $("#app").hidden = true; $("#acoes").hidden = true; $("#sub").textContent = "Sessões do Claude no PC"; }
+function mostrarApp() { $("#cfg").hidden = true; $("#app").hidden = false; $("#acoes").hidden = false; carregar(); }
+$("#salvar").onclick = () => { const v = $("#tok").value.trim(); if (v) { setTok(v); $("#tok").value = ""; mostrarApp(); } };
+$("#tok").onkeydown = e => { if (e.key === "Enter") $("#salvar").click(); };
+$("#trocar").onclick = mostrarCfg;
+$("#recarregar").onclick = carregar;
+$("#filtro").oninput = desenhar;
+document.addEventListener("visibilitychange", () => { if (!document.hidden && !$("#app").hidden) carregar(); });
+getTok() ? mostrarApp() : mostrarCfg();
+</script>
+</body>
+</html>
