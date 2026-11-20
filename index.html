@@ -6,118 +6,321 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Bob RC">
-<meta name="theme-color" content="#f5f2ee" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#14110f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f3ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#100e0d" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon-192.png">
 <title>Bob RC</title>
 <style>
 :root{
-  --bg:#f5f2ee;--bg2:#ebe6df;--card:#ffffff;--tx:#1c1915;--mut:#7a7168;--bd:#e4ddd4;
-  --ac:#cf5b35;--ac2:#b4441f;--acx:#fff;--ok:#1e7d4f;--okbg:#e3f3ea;--warn:#a75f05;--warnbg:#fbefdc;--err:#b3261e;--errbg:#fbe5e3;
-  --sh:0 1px 2px rgba(40,25,10,.06),0 6px 20px rgba(40,25,10,.06);
+  color-scheme:light dark;
+  --bg:#f6f3ef;--surface:#ffffff;--surface2:#f9f7f4;--tx:#1b1916;--tx2:#4f4842;--mut:#73695f;
+  --bd:rgba(70,45,20,.09);--bd2:rgba(70,45,20,.16);
+  --ac:#d0582f;--ac-h:#b94a24;--ac-soft:rgba(208,88,47,.12);--on-ac:#fff;
+  --ok:#14804a;--ok-soft:rgba(20,128,74,.11);
+  --warn:#b26500;--warn-soft:rgba(214,138,0,.14);
+  --err:#c5301d;--err-soft:rgba(197,48,29,.10);
+  --neu-soft:rgba(70,45,20,.06);
+  --sh1:0 1px 2px rgba(50,30,10,.05),0 2px 8px rgba(50,30,10,.04);
+  --sh2:0 1px 2px rgba(50,30,10,.05),0 12px 32px rgba(50,30,10,.08);
+  --sk:rgba(70,45,20,.07);--sk2:rgba(70,45,20,.13);
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#14110f;--bg2:#1c1815;--card:#221d1a;--tx:#f1ebe4;--mut:#a39a90;--bd:#352e29;
-  --ac:#e8754c;--ac2:#d35f37;--acx:#1a120d;--ok:#5fd39b;--okbg:#173126;--warn:#f0b057;--warnbg:#33260f;--err:#ff8a80;--errbg:#3a1a17;
-  --sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  --bg:#100e0d;--surface:#1a1715;--surface2:#211d1a;--tx:#f4efe9;--tx2:#c9c0b6;--mut:#91877d;
+  --bd:rgba(255,235,215,.075);--bd2:rgba(255,235,215,.14);
+  --ac:#ee7a4f;--ac-h:#f48d66;--ac-soft:rgba(238,122,79,.16);--on-ac:#1c0f09;
+  --ok:#4fd08e;--ok-soft:rgba(79,208,142,.13);
+  --warn:#f2b04c;--warn-soft:rgba(242,176,76,.14);
+  --err:#ff7a68;--err-soft:rgba(255,122,104,.13);
+  --neu-soft:rgba(255,235,215,.06);
+  --sh1:0 1px 2px rgba(0,0,0,.35);
+  --sh2:0 1px 2px rgba(0,0,0,.35),0 14px 36px rgba(0,0,0,.35);
+  --sk:rgba(255,235,215,.05);--sk2:rgba(255,235,215,.1);
 }}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
 html,body{margin:0;background:var(--bg);color:var(--tx)}
-body{font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
-  padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 32px);max-width:720px;margin:0 auto}
-header{display:flex;align-items:center;gap:12px;margin:8px 0 18px;flex-wrap:wrap}
-header img{width:44px;height:44px;border-radius:11px;box-shadow:var(--sh)}
-header h1{font-size:24px;line-height:1.1;margin:0;letter-spacing:-.02em}
-header .sub{color:var(--mut);font-size:13px;margin-top:2px}
-header .acoes{margin-left:auto;display:flex;gap:6px;align-items:center}
-.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
-.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:5px 9px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);white-space:nowrap}
-.chip i{width:7px;height:7px;border-radius:50%;background:var(--mut);flex:none}
-.chip.ok i{background:var(--ok)}.chip.av i{background:var(--warn)}.chip.ruim{background:var(--errbg);border-color:transparent;color:var(--err)}.chip.ruim i{background:var(--err)}
+body{font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI Variable Text","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased;min-height:100vh;min-height:100dvh;overflow-x:hidden}
+button{font:inherit;color:inherit;touch-action:manipulation}
+svg{display:block;flex:none}
+[hidden]{display:none!important}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+@media (min-width:700px){.wrap{padding-left:max(28px,env(safe-area-inset-left));padding-right:max(28px,env(safe-area-inset-right))}}
+
+/* ---------- topo ---------- */
+.topo{position:sticky;top:0;z-index:20;padding-top:env(safe-area-inset-top);background:var(--bg);
+  background:color-mix(in srgb,var(--bg) 84%,transparent);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);
+  border-bottom:1px solid transparent;transition:border-color .2s}
+.topo.rolou{border-bottom-color:var(--bd)}
+.topo .wrap{display:flex;align-items:center;gap:12px;min-height:64px}
+.marca{display:flex;align-items:center;gap:11px;min-width:0}
+.marca img{width:36px;height:36px;border-radius:10px;box-shadow:0 1px 2px rgba(0,0,0,.12),0 4px 12px var(--ac-soft)}
+.marca h1{font-size:18px;font-weight:700;letter-spacing:-.022em;margin:0;line-height:1.15}
+#sub{font-size:12.5px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #sub.ruim{color:var(--err);font-weight:600}
-@media (max-width:560px){header .acoes{width:100%;margin-left:0}.chips{justify-content:flex-start;flex:1}}
-.ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);display:grid;place-items:center;cursor:pointer}
-.ib svg{width:20px;height:20px}.ib.gira svg{animation:g 1s linear infinite}@keyframes g{to{transform:rotate(360deg)}}
-.busca{position:relative;margin-bottom:14px}
-.busca input{width:100%;font:inherit;padding:12px 14px 12px 40px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);outline:none}
-.busca input:focus{border-color:var(--ac)}
-.busca svg{position:absolute;left:13px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--mut)}
-.secao{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);margin:20px 4px 8px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin:8px 0;box-shadow:var(--sh);display:flex;gap:12px;align-items:center}
-.pt{width:10px;height:10px;border-radius:50%;flex:none;background:var(--bd)}
-.pt.vs{background:var(--ok);box-shadow:0 0 0 4px var(--okbg)}.pt.tm{background:var(--warn);box-shadow:0 0 0 4px var(--warnbg)}
-.pt.cai{background:var(--err);box-shadow:0 0 0 4px var(--errbg)}
-.card .t{flex:1;min-width:0}
-.nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meta{color:var(--mut);font-size:13px;margin-top:1px}
-.msg{font-size:13px;margin-top:8px;padding:6px 10px;border-radius:10px;display:none}
-.msg.on{display:block}.msg.ok{background:var(--okbg);color:var(--ok)}.msg.err{background:var(--errbg);color:var(--err)}.msg.wait{background:var(--warnbg);color:var(--warn)}
-.bt{font:inherit;font-weight:600;font-size:15px;border:0;border-radius:12px;padding:10px 16px;background:var(--ac);color:var(--acx);cursor:pointer;white-space:nowrap;min-width:92px}
-.bt:active{background:var(--ac2)}.bt:disabled{opacity:.45;cursor:default}
-.bt.sec{background:transparent;color:var(--mut);border:1px solid var(--bd);font-weight:500}
-.col{display:flex;flex-direction:column;align-items:stretch;gap:4px}
-.lk{font:inherit;font-size:13px;background:none;border:0;color:var(--mut);cursor:pointer;padding:2px;text-decoration:underline}
-.nova{display:flex;align-items:center;gap:10px;margin:0 0 6px}.nova .bt{flex:none}.nova .msg{margin:0;flex:1}
-.vazio{color:var(--mut);text-align:center;padding:30px 10px}
-.cfg{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:22px;box-shadow:var(--sh);margin-top:20px}
-.cfg h2{margin:0 0 6px;font-size:20px}.cfg p{color:var(--mut);margin:0 0 16px;font-size:14px}
-.cfg input{width:100%;font:inherit;padding:13px 14px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);margin-bottom:12px}
-.cfg .bt{width:100%;padding:13px}
-footer{margin-top:28px;text-align:center}
-footer button{background:none;border:0;color:var(--mut);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
-.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translateX(-50%) translateY(120px);background:var(--tx);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;transition:transform .25s;max-width:90vw}
+#acoes{margin-left:auto;display:flex;gap:8px;align-items:center}
+.ib{width:44px;height:44px;border-radius:13px;border:1px solid var(--bd2);background:var(--surface);color:var(--tx2);display:grid;place-items:center;cursor:pointer;box-shadow:var(--sh1);transition:background .15s,transform .1s,color .15s}
+.ib svg{width:19px;height:19px}
+@media (hover:hover){.ib:hover{background:var(--surface2);color:var(--tx)}}
+.ib:active{transform:scale(.94)}
+.ib.gira svg{animation:g .9s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+
+/* ---------- cartão do PC ---------- */
+.pc{position:relative;background:var(--surface);border:1px solid var(--bd);border-radius:24px;padding:20px;box-shadow:var(--sh2);margin-top:6px;overflow:hidden;transition:border-color .3s}
+.pc::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--ok);transition:background .3s}
+.pc.atencao::before{background:var(--warn)}
+.pc.ruim{border-color:color-mix(in srgb,var(--err) 35%,transparent)}
+.pc.ruim::before{background:var(--err)}
+.pc.carregando::before{background:var(--bd2)}
+.pc-h{display:flex;align-items:center;gap:14px}
+.pc-ico{width:50px;height:50px;border-radius:15px;background:var(--ac-soft);color:var(--ac);display:grid;place-items:center;flex:none}
+.pc-ico svg{width:26px;height:26px}
+.pc.ruim .pc-ico{background:var(--err-soft);color:var(--err)}
+.pc-t{flex:1;min-width:0}
+.pc-nome{font-size:21px;font-weight:700;letter-spacing:-.025em;margin:0;line-height:1.2}
+.pc-tec{font:500 12px/1.4 var(--mono);color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-dir{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex:none}
+.pc-quando{font-size:12px;color:var(--mut);white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:7px;padding:6px 12px 6px 10px;border-radius:999px;font-size:13px;font-weight:650;white-space:nowrap;background:var(--ok-soft);color:var(--ok)}
+.pill i{position:relative;width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.pill.ok i::after{content:"";position:absolute;inset:0;border-radius:50%;background:currentColor;animation:pulso 2s ease-out infinite}
+.pill.av{background:var(--warn-soft);color:var(--warn)}
+.pill.ruim{background:var(--err-soft);color:var(--err)}
+.pill.neu{background:var(--neu-soft);color:var(--mut)}
+@keyframes pulso{0%{transform:scale(1);opacity:.6}100%{transform:scale(3);opacity:0}}
+@media (max-width:479px){.pc-h{flex-wrap:wrap}.pc-dir{flex-direction:row-reverse;align-items:center;justify-content:space-between;width:100%;padding-top:2px}}
+.alertas{display:grid;gap:8px;margin-top:16px}
+.alertas:empty{display:none}
+.alerta{display:flex;gap:10px;align-items:flex-start;padding:11px 13px;border-radius:13px;background:var(--err-soft);color:var(--err);font-size:14px;font-weight:550;line-height:1.35}
+.alerta svg{width:18px;height:18px;margin-top:0}
+.alerta.av{background:var(--warn-soft);color:var(--warn)}
+.mets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:16px;transition:opacity .3s,filter .3s}
+@media (min-width:640px){.mets{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1000px){.mets{grid-template-columns:repeat(6,minmax(0,1fr))}}
+.pc.velho .mets{opacity:.45;filter:grayscale(1)}
+.met{background:var(--surface2);border:1px solid var(--bd);border-radius:15px;padding:12px 13px 13px;min-width:0}
+.met-h{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:650;letter-spacing:.045em;text-transform:uppercase;color:var(--mut)}
+.met-h svg{width:15px;height:15px}
+.met-v{font-size:19px;font-weight:700;letter-spacing:-.025em;margin-top:7px;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.met-s{font-size:12.5px;color:var(--mut);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.barra{height:4px;border-radius:99px;background:var(--bd2);margin-top:9px;overflow:hidden}
+.barra i{display:block;height:100%;border-radius:inherit;background:var(--tx2);opacity:.55;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.met.alto .barra i{background:var(--ac);opacity:1}
+.met.alto .met-v{color:var(--ac)}
+.met.av .met-v{color:var(--warn)}
+.met.ruim{background:var(--err-soft);border-color:transparent}
+.met.ruim .met-v,.met.ruim .met-h{color:var(--err)}
+.met.ruim .met-s{color:var(--err);opacity:.85}
+
+/* ---------- ferramentas ---------- */
+.ferr{display:flex;gap:10px;align-items:center;margin:30px 0 0}
+.busca{position:relative;flex:1;min-width:0}
+.busca input{-webkit-appearance:none;appearance:none;width:100%;height:46px;padding:0 14px 0 42px;border-radius:14px;border:1px solid var(--bd2);background:var(--surface);color:var(--tx);font:inherit;font-size:16px;outline:none;box-shadow:var(--sh1);transition:border-color .15s,box-shadow .15s}
+.busca input::placeholder{color:var(--mut)}
+.busca input:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--ac-soft)}
+.busca input::-webkit-search-cancel-button{-webkit-appearance:none}
+.busca svg{position:absolute;left:14px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--mut);pointer-events:none}
+#novamsg{margin-top:12px}
+
+/* ---------- botões ---------- */
+.bt{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:0 17px;border-radius:13px;border:1px solid transparent;background:var(--surface2);color:var(--tx2);font-size:15px;font-weight:600;letter-spacing:-.01em;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s,transform .1s,opacity .2s,box-shadow .15s}
+.bt svg{width:18px;height:18px}
+.bt:active:not(:disabled){transform:scale(.97)}
+.bt:disabled{opacity:.5;cursor:default}
+.bt:focus-visible,.ib:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.bt.pri{background:var(--ac);color:var(--on-ac);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 2px 10px var(--ac-soft)}
+@media (hover:hover){.bt.pri:hover:not(:disabled){background:var(--ac-h)}}
+.bt.neutro{background:var(--ok-soft);color:var(--ok)}
+@media (hover:hover){.bt.neutro:hover:not(:disabled){background:color-mix(in srgb,var(--ok) 18%,transparent)}}
+.bt.ghost{background:transparent;border-color:var(--bd2);color:var(--tx2);padding:0 14px}
+@media (hover:hover){.bt.ghost:hover:not(:disabled){background:var(--err-soft);border-color:transparent;color:var(--err)}}
+.bt.mudo{background:var(--neu-soft);color:var(--mut)}
+.bt.mudo:disabled{opacity:1}
+#nova{min-height:46px}
+@media (max-width:699px){
+  #nova{position:fixed;z-index:30;right:max(16px,calc(env(safe-area-inset-right) + 16px));bottom:calc(env(safe-area-inset-bottom) + 18px);
+    min-height:54px;padding:0 22px 0 18px;border-radius:999px;font-size:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 28px rgba(208,88,47,.38),0 2px 6px rgba(0,0,0,.15)}
+  #nova:disabled{opacity:.7}
+  #app{padding-bottom:calc(env(safe-area-inset-bottom) + 96px)}
+}
+
+/* ---------- lista ---------- */
+.grupo{margin-top:26px}
+.secao{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:650;color:var(--tx2);margin:0 4px 11px}
+.secao .n{font-size:12px;font-weight:600;min-width:22px;text-align:center;padding:1px 7px;border-radius:99px;background:var(--neu-soft);color:var(--mut);font-variant-numeric:tabular-nums}
+.grade{display:grid;gap:10px}
+@media (min-width:900px){.grade{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+.card{background:var(--surface);border:1px solid var(--bd);border-radius:19px;padding:16px;box-shadow:var(--sh1);display:flex;flex-direction:column;gap:12px;min-width:0;transition:box-shadow .2s,border-color .2s}
+@media (hover:hover){.card:hover{box-shadow:var(--sh2);border-color:var(--bd2)}}
+.card-top{display:flex;gap:13px;align-items:flex-start;min-width:0}
+.sico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:var(--neu-soft);color:var(--mut);transition:background .3s,color .3s}
+.sico svg{width:19px;height:19px}
+.t{flex:1;min-width:0}
+.nome{font-size:16px;font-weight:620;letter-spacing:-.012em;margin:0;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;margin-top:6px;font-size:13px;color:var(--mut)}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:650;padding:2px 9px 2px 8px;border-radius:99px;background:var(--neu-soft);color:var(--tx2);white-space:nowrap}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.auto{display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-size:12.5px;font-weight:550;color:var(--ok)}
+.auto svg{width:14px;height:14px}
+.st-ok .sico,.st-ok .badge{background:var(--ok-soft);color:var(--ok)}
+.st-run .sico{background:var(--ok-soft);color:var(--ok)}
+.st-cai .sico,.st-cai .badge{background:var(--err-soft);color:var(--err)}
+.st-cai{border-color:color-mix(in srgb,var(--err) 28%,transparent)}
+.st-term .sico,.st-term .badge{background:var(--warn-soft);color:var(--warn)}
+.acts{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:auto;flex-wrap:wrap}
+
+/* ---------- mensagens ---------- */
+.msg{display:none;align-items:flex-start;gap:9px;font-size:13.5px;line-height:1.4;padding:10px 12px;border-radius:12px;overflow-wrap:anywhere}
+.msg.on{display:flex;animation:entra .25s ease both}
+.msg.ok{background:var(--ok-soft);color:var(--ok)}
+.msg.err{background:var(--err-soft);color:var(--err)}
+.msg.wait{background:var(--warn-soft);color:var(--warn)}
+.msg.wait::before{content:"";width:13px;height:13px;margin-top:2px;flex:none;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:g .8s linear infinite}
+.msg.ok::before{content:"✓";font-weight:700;flex:none}
+.msg.err::before{content:"!";font-weight:800;flex:none;width:16px;height:16px;border-radius:50%;background:currentColor;color:var(--surface);display:grid;place-items:center;font-size:11px;margin-top:1px}
+@keyframes entra{from{opacity:0;transform:translateY(-3px)}}
+
+/* ---------- vazio / esqueleto ---------- */
+.vazio{display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--mut);text-align:center;padding:48px 16px;font-size:15px}
+.vazio svg{width:30px;height:30px;opacity:.6}
+.sk{border-radius:8px;background:linear-gradient(90deg,var(--sk) 25%,var(--sk2) 50%,var(--sk) 75%);background-size:300% 100%;animation:brilho 1.4s ease-in-out infinite}
+@keyframes brilho{from{background-position:100% 0}to{background-position:0 0}}
+
+/* ---------- rodapé ---------- */
+footer{display:flex;flex-direction:column;align-items:center;gap:6px;margin:40px 0 0;padding-bottom:calc(env(safe-area-inset-bottom) + 28px)}
+footer .bt{background:transparent;color:var(--mut);font-weight:550;font-size:14px}
+@media (hover:hover){footer .bt:hover{color:var(--tx);background:var(--neu-soft)}}
+footer small{color:var(--mut);font-size:12px}
+
+/* ---------- conectar ---------- */
+.cfg-wrap{display:grid;place-items:center;min-height:calc(100vh - 140px);min-height:calc(100dvh - 140px);padding:24px 0 calc(env(safe-area-inset-bottom) + 32px)}
+.cfg{width:100%;max-width:440px;background:var(--surface);border:1px solid var(--bd);border-radius:26px;padding:30px 24px 24px;box-shadow:var(--sh2);text-align:center}
+.cfg img{width:68px;height:68px;border-radius:17px;box-shadow:0 2px 4px rgba(0,0,0,.12),0 10px 26px var(--ac-soft)}
+.cfg h2{margin:18px 0 6px;font-size:23px;font-weight:700;letter-spacing:-.025em}
+.cfg p{color:var(--tx2);margin:0 auto 22px;font-size:14.5px;max-width:340px}
+.cfg p b{color:var(--tx);font-family:var(--mono);font-size:13.5px;font-weight:600}
+.cfg label{display:block;text-align:left;font-size:13px;font-weight:600;color:var(--tx2);margin:0 2px 7px}
+.cfg input{width:100%;height:50px;font:inherit;font-size:16px;padding:0 14px;border-radius:14px;border:1px solid var(--bd2);background:var(--surface2);color:var(--tx);outline:none;margin-bottom:14px;transition:border-color .15s,box-shadow .15s}
+.cfg input:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--ac-soft)}
+.cfg .bt{width:100%;min-height:50px;font-size:16px}
+.nota{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:16px;font-size:12.5px;color:var(--mut)}
+.nota svg{width:14px;height:14px}
+
+/* ---------- aviso flutuante ---------- */
+.toast{position:fixed;z-index:40;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);transform:translateX(-50%) translateY(140px);background:var(--tx);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:14.5px;font-weight:550;box-shadow:0 10px 30px rgba(0,0,0,.25);transition:transform .3s cubic-bezier(.2,.8,.2,1);max-width:calc(100vw - 32px);text-align:center}
 .toast.on{transform:translateX(-50%) translateY(0)}
+@media (max-width:699px){.toast{bottom:calc(env(safe-area-inset-bottom) + 86px)}}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
 </style>
 </head>
 <body>
-<header>
-  <img src="icon-192.png" alt="">
-  <div><h1>Bob RC</h1><div class="sub" id="sub">Sessões do Claude no PC</div></div>
-  <div class="acoes" id="acoes" hidden>
-    <div class="chips" id="chips"></div>
-    <button class="ib" id="recarregar" aria-label="Atualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+<header class="topo" id="topo">
+  <div class="wrap">
+    <div class="marca">
+      <img src="icon-192.png" alt="">
+      <div style="min-width:0"><h1>Bob RC</h1><div id="sub">Sessões do Claude Code</div></div>
+    </div>
+    <div id="acoes" hidden>
+      <button class="ib" id="recarregar" aria-label="Atualizar" title="Atualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
+    </div>
   </div>
 </header>
 
-<section id="cfg" class="cfg" hidden>
-  <h2>Conectar ao PC</h2>
-  <p>Cole a chave do GitHub restrita ao repositório <b>bob-rc-canal</b>. Ela fica guardada só neste aparelho.</p>
-  <input id="tok" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="github_pat_…">
-  <button class="bt" id="salvar">Conectar</button>
-</section>
+<div class="wrap">
+  <section id="cfg" class="cfg-wrap" hidden>
+    <div class="cfg">
+      <img src="icon-192.png" alt="">
+      <h2>Conectar ao notebook</h2>
+      <p>Cole a chave do GitHub restrita ao repositório <b>bob-rc-canal</b>. É por ela que este aparelho conversa com o notebook Marilan.</p>
+      <label for="tok">Chave de acesso</label>
+      <input id="tok" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="github_pat_…">
+      <button class="bt pri" id="salvar">Conectar</button>
+      <div class="nota"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Fica guardada só neste aparelho.</div>
+    </div>
+  </section>
 
-<main id="app" hidden>
-  <div class="busca">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="filtro" placeholder="Buscar sessão" autocomplete="off">
-  </div>
-  <div class="nova"><button class="bt sec" id="nova">+ Nova sessão</button><div class="msg" id="novamsg"></div></div>
-  <div id="lista"></div>
-  <footer><button id="trocar">Trocar chave de acesso</button></footer>
-</main>
+  <main id="app" hidden>
+    <section class="pc carregando" id="pc" aria-live="polite"></section>
 
-<div class="toast" id="toast"></div>
+    <div class="ferr">
+      <div class="busca">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="filtro" type="search" placeholder="Buscar sessão" autocomplete="off" aria-label="Buscar sessão">
+      </div>
+      <button class="bt pri" id="nova"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>Nova sessão</span></button>
+    </div>
+    <div class="msg" id="novamsg"></div>
+
+    <div id="lista"></div>
+
+    <footer>
+      <button class="bt" id="trocar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14.5 8.5l2 2"/></svg>Trocar chave de acesso</button>
+      <small>Bob RC · Remote Control do Claude Code</small>
+    </footer>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
 
 <script>
 const REPO = "Cadueo/bob-rc-canal";
 const $ = s => document.querySelector(s);
 const getTok = () => { try { return localStorage.getItem("bobrc_token") || ""; } catch (e) { return ""; } };
 const setTok = v => { try { localStorage.setItem("bobrc_token", v); } catch (e) {} };
-let sessoes = [], pendentes = {};
+let sessoes = [], pendentes = {}, avisos = {}, carregou = false;
+const ui = { _nova: { r: $("#novamsg"), bs: [$("#nova")] } };   // elementos vivos de cada chave de pedido
+const nomeDe = s => String(s.titulo || "Sessão " + s.id);
 
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 
-function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => el.classList.remove("on"), 2600); }
+/* ---------- ícones (texto fixo, nunca dado do JSON) ---------- */
+const ICON = {
+  laptop: '<rect x="4" y="4" width="16" height="11" rx="2"/><path d="M2 19h20"/>',
+  plug: '<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>',
+  bat: '<rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2"/><path d="M6 10v4"/>',
+  rede: '<path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><path d="M2 9a15 15 0 0 1 20 0"/><circle cx="12" cy="19.5" r=".8" fill="currentColor"/>',
+  cpu: '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M10 10h4v4h-4zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+  mem: '<rect x="3" y="7" width="18" height="10" rx="1.5"/><path d="M7 11v2M11 11v2M15 11v2M7 17v3M12 17v3M17 17v3"/>',
+  relogio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  code: '<path d="m16 18 6-6-6-6M8 6l-6 6 6 6"/>',
+  alerta: '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  power: '<path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  term: '<path d="m4 17 6-5-6-5M12 19h8"/>',
+  pausa: '<circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/>',
+  sinal: '<path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><circle cx="12" cy="19.5" r=".8" fill="currentColor"/>',
+  queda: '<path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/><path d="M3 3l18 18"/>',
+  auto: '<path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/>',
+  vazio: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>'
+};
+function ic(n) {
+  const t = document.createElement("template");
+  t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICON[n] + "</svg>";
+  return t.content.firstChild;
+}
+function el(tag, cls, txt) { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+
+function toast(t) { const e = $("#toast"); e.textContent = t; e.classList.add("on"); clearTimeout(toast.h); toast.h = setTimeout(() => e.classList.remove("on"), 2600); }
 
 async function gh(metodo, caminho, corpo, raw) {
-  const r = await fetch(`https://api.github.com/repos/${REPO}${caminho}`, {
-    method: metodo, cache: "no-store",
-    headers: { Authorization: `Bearer ${getTok()}`, Accept: raw ? "application/vnd.github.raw+json" : "application/vnd.github+json" },
-    body: corpo ? JSON.stringify(corpo) : undefined });
+  let r;
+  try {
+    r = await fetch(`https://api.github.com/repos/${REPO}${caminho}`, {
+      method: metodo, cache: "no-store",
+      headers: { Authorization: `Bearer ${getTok()}`, Accept: raw ? "application/vnd.github.raw+json" : "application/vnd.github+json" },
+      body: corpo ? JSON.stringify(corpo) : undefined });
+  } catch (e) { throw new Error("sem conexão com o GitHub"); }
+  if (r.status === 403 && r.headers.get("x-ratelimit-remaining") === "0") throw new Error("limite de consultas do GitHub; tente em instantes");
   if (r.status === 401 || r.status === 403) throw new Error("chave recusada");
   if (r.status === 404) throw new Error("canal ainda sem dados do PC");
   if (!r.ok) throw new Error("GitHub respondeu " + r.status);
@@ -125,143 +328,286 @@ async function gh(metodo, caminho, corpo, raw) {
 }
 
 function haQuanto(iso) {
-  const min = Math.round((Date.now() - new Date(iso)) / 60000);
+  const t = iso ? new Date(iso).getTime() : NaN;
+  if (!isFinite(t)) return "";
+  const min = Math.round((Date.now() - t) / 60000);
   if (min < 1) return "agora"; if (min < 60) return `há ${min} min`;
   const h = Math.round(min / 60); if (h < 24) return `há ${h} h`; const d = Math.round(h / 24); return d === 1 ? "ontem" : `há ${d} dias`;
 }
+function tempoLigado(min) { min = Math.round(min); const h = min / 60; return min < 60 ? min + " min" : h < 48 ? Math.round(h) + " h" : Math.round(h / 24) + " dias"; }
+
+/* ---------- cartão do PC ---------- */
+function metrica(icone, rotulo, valor, sub, nivel, pct, dica) {
+  const x = el("div", "met" + (nivel ? " " + nivel : ""));
+  if (dica) x.title = dica;
+  const h = el("div", "met-h"); h.append(ic(icone), el("span", null, rotulo));
+  x.append(h, el("div", "met-v", valor));
+  if (pct != null) { const b = el("div", "barra"), i = el("i"); i.style.width = Math.max(2, Math.min(100, pct)) + "%"; b.append(i); x.append(b); }
+  if (sub) x.append(el("div", "met-s", sub));
+  return x;
+}
+
+function cabecalhoPC(nome, pill, pillCls, quando) {
+  const h = el("div", "pc-h");
+  const i = el("div", "pc-ico"); i.append(ic("laptop"));
+  const t = el("div", "pc-t"); t.append(el("h2", "pc-nome", "Notebook Marilan"), el("div", "pc-tec", nome || "—"));
+  const dir = el("div", "pc-dir");
+  const p = el("span", "pill " + pillCls); p.append(el("i"), el("span", null, pill));
+  dir.append(p); if (quando) dir.append(el("div", "pc-quando", quando));
+  h.append(i, t, dir);
+  return h;
+}
+
+function esqueletoPC() {
+  const pc = $("#pc"); pc.className = "pc carregando"; pc.replaceChildren();
+  pc.append(cabecalhoPC("…", "Conectando", "neu", ""));
+  const g = el("div", "mets");
+  for (let k = 0; k < 6; k++) { const m = el("div", "met"); const a = el("div", "sk"); a.style.cssText = "height:11px;width:55%"; const b = el("div", "sk"); b.style.cssText = "height:20px;width:75%;margin-top:10px"; m.append(a, b); g.append(m); }
+  pc.append(g);
+}
+
+function erroPC(msg) {
+  const pc = $("#pc"); pc.className = "pc ruim"; pc.replaceChildren();
+  pc.append(cabecalhoPC("", "Sem dados", "ruim", ""));
+  const a = el("div", "alertas"), l = el("div", "alerta"); l.append(ic("alerta"), el("span", null, "Não foi possível ler o canal: " + msg));
+  a.append(l); pc.append(a);
+}
+
+function desenharPC(d, velho) {
+  const m = d.maquina || {}, mets = [], alertas = [];
+  if (m.bateria != null || m.tomada != null) {
+    const bat = typeof m.bateria === "number" ? "Bateria " + Math.round(m.bateria) + "%" : "";
+    if (m.tomada === false) {
+      mets.push(metrica("bat", "Energia", bat || "Na bateria", "Fora da tomada", "ruim", null, "Fora da tomada: a energia pode ter caído"));
+      alertas.push(["ruim", "Fora da tomada: a energia pode ter caído."]);
+    } else if (m.tomada === true) mets.push(metrica("plug", "Energia", "Na tomada", [bat, m.carregando ? "carregando" : ""].filter(Boolean).join(" · ") || "Sem bateria", "", null, "Na tomada"));
+    else mets.push(metrica("bat", "Energia", bat || "—",m.carregando ? "Carregando" : "Tomada: sem informação", "", null, "Bateria"));
+  }
+  if (m.rede_ms === null) {
+    mets.push(metrica("rede", "Rede Marilan", "Fora", "Sem acesso ao SAP", "ruim", null, "O PC não alcança o SAP: rede interna fora"));
+    alertas.push(["ruim", "Rede Marilan fora: o notebook não alcança o SAP."]);
+  } else if (typeof m.rede_ms === "number") mets.push(metrica("rede", "Rede Marilan", Math.round(m.rede_ms) + " ms", m.rede_ms > 1500 ? "Lenta até o SAP PRD" : "Até o SAP PRD", m.rede_ms > 1500 ? "av" : "", null, "Tempo para alcançar o SAP PRD"));
+  if (typeof m.cpu === "number") mets.push(metrica("cpu", "CPU", Math.round(m.cpu) + "%", m.cpu >= 90 ? "Processador no limite" : "Processador", m.cpu >= 90 ? "alto" : "", m.cpu, "Uso do processador"));
+  if (typeof m.mem === "number") mets.push(metrica("mem", "Memória", Math.round(m.mem) + "%", m.mem >= 90 ? "Memória quase cheia" : "Em uso", m.mem >= 90 ? "alto" : "", m.mem, "Uso da memória"));
+  if (typeof m.ligado_min === "number") {
+    const rec = m.ligado_min < 30;
+    mets.push(metrica("relogio", "Ligado há", tempoLigado(m.ligado_min), rec ? "Reiniciou há pouco" : "Desde o último reinício", rec ? "av" : "", null, rec ? "O PC reiniciou há pouco" : "Tempo desde o último reinício"));
+    if (rec) alertas.push(["av", "O notebook reiniciou há pouco (" + tempoLigado(m.ligado_min) + ")."]);
+  }
+  if (m.vscode != null) {
+    if (m.vscode === false) {
+      mets.push(metrica("code", "VS Code", "Fora", "Não responde", "ruim", null, "O motor do VS Code não responde: o VS Code está fechado?"));
+      alertas.push(["ruim", "VS Code fora: o motor não responde. Está fechado?"]);
+    } else mets.push(metrica("code", "VS Code", "Aberto", "Respondendo", "", null, "Motor do VS Code respondendo"));
+  }
+
+  let pill = "Online", pillCls = "ok", cls = "pc";
+  if (velho) {
+    pill = "Sem sinal"; pillCls = "ruim"; cls += " ruim velho";
+    alertas.length = 0;
+    alertas.push(["ruim", "PC sem sinal" + (haQuanto(d.atualizado) ? " " + haQuanto(d.atualizado) : "") + ": desligado, sem internet ou vigia parado. Os números abaixo são da última notícia."]);
+  } else if (alertas.some(a => a[0] === "ruim")) { pill = "Online · atenção"; pillCls = "ruim"; cls += " ruim"; }
+  else if (alertas.length) { pill = "Online · atenção"; pillCls = "av"; cls += " atencao"; }
+
+  const pc = $("#pc"); pc.className = cls; pc.replaceChildren();
+  const qd = haQuanto(d.atualizado);
+  pc.append(cabecalhoPC(m.nome, pill, pillCls, qd ? "Atualizado " + qd : ""));
+  const a = el("div", "alertas");
+  alertas.forEach(([n, txt]) => { const l = el("div", "alerta" + (n === "av" ? " av" : "")); l.append(ic("alerta"), el("span", null, txt)); a.append(l); });
+  pc.append(a);
+  if (mets.length) { const g = el("div", "mets"); g.append(...mets); pc.append(g); }
+}
+
+/* ---------- sessões ---------- */
+function estado(s) {
+  if (!s.processo) return { k: "parada", rot: "Parada", ico: "pausa" };
+  if (s.rc === "caido") return { k: "cai", rot: "RC caído", ico: "queda" };
+  if (s.onde !== "claude-vscode") return { k: "term", rot: s.rc === "ligado" ? "No terminal · RC ligado" : "No terminal", ico: "term" };
+  if (s.rc === "ligado") return { k: "ok", rot: "RC ligado", ico: "sinal" };
+  return { k: "run", rot: "Rodando", ico: "power" };
+}
+
+function botao(cls, icone, txt) { const b = el("button", "bt " + cls); if (icone) b.append(ic(icone)); b.append(el("span", null, txt)); return b; }
 
 function cartao(s) {
-  const c = document.createElement("div"); c.className = "card";
-  const ligado = s.processo && s.rc === "ligado", caido = s.processo && s.rc === "caido";
-  const pt = document.createElement("div"); pt.className = "pt" + (!s.processo ? "" : caido ? " cai" : s.onde === "claude-vscode" ? " vs" : " tm");
-  const t = document.createElement("div"); t.className = "t";
-  const n = document.createElement("div"); n.className = "nome"; n.textContent = s.titulo;
-  const m = document.createElement("div"); m.className = "meta";
-  const onde = s.onde === "claude-vscode" ? "VS Code" : "terminal";
-  m.textContent = (!s.processo ? "Parada" : ligado ? "RC ligado · " + onde : caido ? "RC caído · " + onde : "Rodando no " + onde) + " · " + haQuanto(s.ultima);
-  const r = document.createElement("div"); r.className = "msg";
-  t.append(n, m, r);
-  if (s.auto) m.textContent += " · religada sozinha às " + s.auto;
-  const b = document.createElement("button"); b.className = "bt"; b.textContent = "Acordar";
-  if (!s.pode_acordar) { b.disabled = true; b.textContent = "No terminal"; }
-  else if (ligado) { b.className = "bt sec"; b.textContent = "Conectada"; }
-  if (pendentes[s.id]) { b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id]; }
-  b.onclick = () => acordar(s, b, r);
-  const col = document.createElement("div"); col.className = "col"; col.append(b);
+  const st = estado(s), ligado = s.processo && s.rc === "ligado";
+  const c = el("article", "card st-" + st.k);
+  const top = el("div", "card-top");
+  const sico = el("div", "sico"); sico.append(ic(st.ico));
+  const t = el("div", "t");
+  const n = el("h3", "nome", nomeDe(s)); n.title = nomeDe(s);
+  const m = el("div", "meta");
+  const onde = s.onde === "claude-vscode" ? "VS Code" : s.onde === "cli" ? "Terminal" : null;
+  m.append(el("span", "badge", st.rot), el("span", null, [s.processo && onde && st.k !== "term" ? onde : null, haQuanto(s.ultima)].filter(Boolean).join(" · ")));
+  t.append(n, m);
+  if (s.auto) { const a = el("div", "auto"); a.append(ic("auto"), el("span", null, "Religada sozinha às " + s.auto)); t.append(a); }
+  top.append(sico, t);
+
+  const r = el("div", "msg");
+  const acts = el("div", "acts"), bs = [];
   if (s.processo && s.onde === "claude-vscode") {
-    const f = document.createElement("button"); f.className = "lk"; f.textContent = "Fechar";
-    f.onclick = () => fechar(s, f, r); col.append(f);
+    const f = botao("ghost", "x", "Fechar"); f.title = "Fechar a aba no VS Code";
+    f.onclick = () => fechar(s); acts.append(f); bs.push(f);
   }
-  c.append(pt, t, col);
+  let b;
+  if (!s.pode_acordar) { b = botao("mudo", "term", "No terminal"); b.dataset.fixo = "1"; }
+  else if (ligado) { b = botao("neutro", "check", "Conectada"); b.title = "RC ligado. Clique só se ela não aparecer no app do Claude"; }
+  else b = botao("pri", "power", "Acordar");
+  b.onclick = () => acordar(s);
+  acts.append(b); bs.push(b);
+  c.append(top, r, acts);
+  ui[s.id] = { r, bs }; pintar(s.id);
   return c;
 }
 
-function chips(m, velho) {
-  const el = $("#chips"); el.innerHTML = "";
-  const add = (txt, cls, dica) => { const c = document.createElement("span"); c.className = "chip " + cls; c.title = dica;
-    c.innerHTML = "<i></i>"; c.append(txt); el.append(c); };
-  if (velho) { add("PC fora do ar", "ruim", "O PC parou de mandar notícia: desligado, sem internet ou vigia parado"); return; }
-  if (m.bateria != null) add((m.tomada === false ? "Bateria " : "Tomada ") + m.bateria + "%",
-    m.tomada === false ? "ruim" : "ok", m.tomada === false ? "Fora da tomada: a energia pode ter caído" : "Na tomada");
-  add(m.rede_ms == null ? "Rede Marilan fora" : "Rede " + m.rede_ms + " ms", m.rede_ms == null ? "ruim" : m.rede_ms > 1500 ? "av" : "ok",
-    m.rede_ms == null ? "O PC não alcança o SAP: rede interna fora" : "Tempo para alcançar o SAP PRD");
-  if (m.cpu != null) add("CPU " + m.cpu + "% · Mem " + m.mem + "%", (m.cpu >= 90 || m.mem >= 90) ? "av" : "ok", "Uso do processador e da memória");
-  if (m.ligado_min != null) { const h = m.ligado_min / 60;
-    add("Ligado " + (m.ligado_min < 60 ? m.ligado_min + " min" : h < 48 ? Math.round(h) + " h" : Math.round(h / 24) + " d"),
-      m.ligado_min < 30 ? "av" : "ok", m.ligado_min < 30 ? "O PC reiniciou há pouco" : "Tempo desde o último reinício"); }
-  if (m.vscode === false) add("VS Code fora", "ruim", "O motor do VS Code não responde: o VS Code está fechado?");
+function esqueletoLista() {
+  const el0 = $("#lista"); el0.replaceChildren();
+  const g = el("div", "grupo"), h = el("div", "secao"), hs = el("div", "sk"); hs.style.cssText = "height:13px;width:130px"; h.append(hs);
+  const grade = el("div", "grade");
+  for (let k = 0; k < 4; k++) {
+    const c = el("div", "card esq"), top = el("div", "card-top"), i = el("div", "sico sk"), t = el("div", "t");
+    const a = el("div", "sk"); a.style.cssText = "height:15px;width:" + (60 + k * 8) + "%";
+    const b = el("div", "sk"); b.style.cssText = "height:12px;width:40%;margin-top:10px";
+    t.append(a, b); top.append(i, t);
+    const ac = el("div", "acts"), bt = el("div", "sk"); bt.style.cssText = "height:44px;width:110px;border-radius:13px"; ac.append(bt);
+    c.append(top, ac); grade.append(c);
+  }
+  g.append(h, grade); el0.append(g);
 }
 
 function desenhar() {
-  const f = $("#filtro").value.trim().toLowerCase(), el = $("#lista");
-  const vis = sessoes.filter(x => !f || x.titulo.toLowerCase().includes(f));
-  el.innerHTML = "";
-  if (!vis.length) { el.innerHTML = '<div class="vazio">Nenhuma sessão encontrada.</div>'; return; }
+  if (!carregou) { esqueletoLista(); return; }
+  const f = $("#filtro").value.trim().toLowerCase(), lista = $("#lista");
+  const vis = sessoes.filter(x => !f || nomeDe(x).toLowerCase().includes(f));
+  for (const k in ui) if (k !== "_nova") delete ui[k];
+  lista.replaceChildren();
+  if (!vis.length) {
+    const v = el("div", "vazio"); v.append(ic("vazio"), el("div", null, f ? "Nenhuma sessão com “" + $("#filtro").value.trim() + "”." : "Nenhuma sessão encontrada."));
+    lista.append(v); return;
+  }
   const grupos = [["No VS Code agora", vis.filter(s => s.processo)], ["Conversas recentes", vis.filter(s => !s.processo)]];
   for (const [titulo, itens] of grupos) {
     if (!itens.length) continue;
-    const h = document.createElement("div"); h.className = "secao"; h.textContent = titulo; el.append(h);
-    itens.forEach(s => el.append(cartao(s)));
+    const g = el("section", "grupo"), h = el("h2", "secao");
+    h.append(el("span", null, titulo), el("span", "n", String(itens.length)));
+    const grade = el("div", "grade"); itens.forEach(s => grade.append(cartao(s)));
+    g.append(h, grade); lista.append(g);
   }
 }
 
 async function carregar() {
+  const meu = carregar.seq = (carregar.seq || 0) + 1;   // só a chamada mais recente desenha
   const bt = $("#recarregar"); bt.classList.add("gira");
   try {
-    const d = JSON.parse(await gh("GET", "/contents/sessoes.json", null, true));
-    sessoes = d.sessoes || [];
-    const velho = (Date.now() - new Date(d.atualizado)) / 60000 > 2.5;
-    $("#sub").textContent = velho ? "PC sem sinal " + haQuanto(d.atualizado) : "PC respondeu " + haQuanto(d.atualizado);
-    $("#sub").className = "sub" + (velho ? " ruim" : "");
-    chips(d.maquina || {}, velho);
+    const txt = await gh("GET", "/contents/sessoes.json", null, true);
+    if (meu !== carregar.seq) return;
+    let d; try { d = JSON.parse(txt); } catch (e) { d = null; }
+    if (!d || typeof d !== "object") throw new Error("sessoes.json ilegível");
+    sessoes = Array.isArray(d.sessoes) ? d.sessoes.filter(s => s && s.id != null) : [];
+    carregou = true;
+    const t = d.atualizado ? new Date(d.atualizado).getTime() : NaN;
+    const velho = !isFinite(t) || (Date.now() - t) / 60000 > 2.5;
+    $("#sub").textContent = "Sessões do Claude Code"; $("#sub").className = "";
+    desenharPC(d, velho);
     desenhar();
   } catch (e) {
-    $("#sub").textContent = e.message;
-    if (/chave/.test(e.message)) mostrarCfg();
-  } finally { bt.classList.remove("gira"); }
+    if (meu !== carregar.seq) return;
+    if (/chave/.test(e.message)) { mostrarCfg(e.message); return; }
+    $("#sub").textContent = e.message; $("#sub").className = "ruim";
+    if (!carregou) { erroPC(e.message); $("#lista").replaceChildren(); }
+  } finally { if (meu === carregar.seq) bt.classList.remove("gira"); }
 }
 
-async function pedido(titulo, chave, r, b, msgs) {
-  if (b) b.disabled = true;
-  r.className = "msg on wait"; r.textContent = pendentes[chave] = "Pedido enviado ao PC…";
+/* estado de cada pedido fica aqui (não no DOM), para sobreviver ao redesenho da lista */
+function aviso(chave, cls, txt, ms) {
+  const a = avisos[chave]; if (a && a.h) clearTimeout(a.h);
+  if (!cls) delete avisos[chave];
+  else { avisos[chave] = { cls, txt }; if (ms) avisos[chave].h = setTimeout(() => aviso(chave), ms); }
+  pintar(chave);
+}
+function pintar(chave) {
+  const u = ui[chave]; if (!u) return;
+  const a = avisos[chave];
+  u.r.className = a ? "msg on " + a.cls : "msg"; u.r.textContent = a ? a.txt : "";
+  u.bs.forEach(b => { b.disabled = b.dataset.fixo === "1" || !!pendentes[chave]; });
+}
+
+async function pedido(titulo, chave, msgs) {
+  if (pendentes[chave]) return;
+  pendentes[chave] = true;
+  aviso(chave, "wait", "Pedido enviado ao PC…");
   try {
     const is = await gh("POST", "/issues", { title: titulo, body: msgs.corpo || "" });
     for (let k = 1; k <= 60; k++) {
       await new Promise(x => setTimeout(x, 4000));
-      const i = await gh("GET", "/issues/" + is.number);
+      let i;
+      try { i = await gh("GET", "/issues/" + is.number); }
+      catch (e) { if (/chave/.test(e.message)) throw e; continue; }   // falha de rede passageira: segue esperando
       if (i.state === "closed") {
-        const cs = await gh("GET", `/issues/${is.number}/comments`);
-        const txt = cs.length ? cs[cs.length - 1].body : "concluído";
+        let txt = "concluído";
+        try { const cs = await gh("GET", `/issues/${is.number}/comments`); if (cs.length && cs[cs.length - 1].body) txt = cs[cs.length - 1].body; } catch (e) {}
         const ok = /^OK/.test(txt);
         delete pendentes[chave];
-        r.className = "msg on " + (ok ? "ok" : "err"); r.textContent = ok ? msgs.ok : txt;
+        aviso(chave, ok ? "ok" : "err", ok ? msgs.ok : txt, ok ? 8000 : 20000);
         if (ok) toast(msgs.toast);
-        if (b) b.disabled = false;
         carregar(); setTimeout(carregar, 5000); setTimeout(carregar, 15000);
-        setTimeout(() => { if (r.textContent === (ok ? msgs.ok : txt)) r.className = "msg"; }, ok ? 8000 : 20000);
         return;
       }
-      r.textContent = pendentes[chave] = `${msgs.andando} ${k * 4} s`;
+      aviso(chave, "wait", `${msgs.andando} ${k * 4} s`);
     }
-    r.className = "msg on err"; r.textContent = "O PC não respondeu em 4 min. O vigia está rodando?";
-  } catch (e) { r.className = "msg on err"; r.textContent = e.message; }
-  delete pendentes[chave]; if (b) b.disabled = false;
+    delete pendentes[chave];
+    aviso(chave, "err", "O PC não respondeu em 4 min. O vigia está rodando?", 20000);
+  } catch (e) {
+    delete pendentes[chave];
+    aviso(chave, "err", e.message, 20000);
+    if (/chave/.test(e.message)) mostrarCfg(e.message);
+  }
 }
 
-function acordar(s, b, r) {
-  if (s.processo && s.rc === "ligado" && !confirm(`"${s.titulo}" já está com o RC ligado.
+function acordar(s) {
+  const tit = nomeDe(s);
+  if (s.processo && s.rc === "ligado" && !confirm(`"${tit}" já está com o RC ligado.
 
 Só vale reiniciar se ela não aparecer no app do Claude. Reiniciar mesmo assim?`)) return;
-  if (s.processo && s.rc !== "ligado" && !confirm(`"${s.titulo}" está rodando no VS Code.
+  if (s.processo && s.rc !== "ligado" && !confirm(`"${tit}" está rodando no VS Code.
 
 Acordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
-  pedido("acordar " + s.id, s.id, r, b, { corpo: s.titulo, ok: "Acordada. Abra no app do Claude.", toast: `"${s.titulo}" acordada`, andando: "O PC está acordando a sessão…" });
+  pedido("acordar " + s.id, s.id, { corpo: s.titulo || "", ok: "Acordada. Abra no app do Claude.", toast: `"${tit}" acordada`, andando: "O PC está acordando a sessão…" });
 }
 
-function fechar(s, b, r) {
-  if (!confirm(`Fechar "${s.titulo}" no VS Code?
+function fechar(s) {
+  const tit = nomeDe(s);
+  if (!confirm(`Fechar "${tit}" no VS Code?
 
 O processo é encerrado e a aba fecha. A conversa fica salva em "Conversas recentes" para reabrir depois.`)) return;
-  pedido("fechar " + s.id, s.id, r, b, { corpo: s.titulo, ok: "Fechada. A conversa continua salva.", toast: `"${s.titulo}" fechada`, andando: "O PC está fechando a aba…" });
+  pedido("fechar " + s.id, s.id, { corpo: s.titulo || "", ok: "Fechada. A conversa continua salva.", toast: `"${tit}" fechada`, andando: "O PC está fechando a aba…" });
 }
 
 function nova() {
   if (!confirm(`Abrir uma sessão nova no VS Code do PC?
 
 Ela nasce com o RC ligado e aparece no app do Claude.`)) return;
-  pedido("nova", "_nova", $("#novamsg"), $("#nova"), { ok: "Sessão nova aberta. No app do Claude, mande como 1ª mensagem: /rename Nome da sessão", toast: "Sessão nova aberta", andando: "O PC está abrindo a sessão…" });
+  pedido("nova", "_nova", { ok: "Sessão nova aberta. No app do Claude, mande como 1ª mensagem: /rename Nome da sessão", toast: "Sessão nova aberta", andando: "O PC está abrindo a sessão…" });
 }
 
-function mostrarCfg() { $("#cfg").hidden = false; $("#app").hidden = true; $("#acoes").hidden = true; $("#sub").textContent = "Sessões do Claude no PC"; }
-function mostrarApp() { $("#cfg").hidden = true; $("#app").hidden = false; $("#acoes").hidden = false; carregar(); }
+function mostrarCfg(motivo) {
+  $("#cfg").hidden = false; $("#app").hidden = true; $("#acoes").hidden = true;
+  $("#sub").textContent = motivo ? "Chave recusada pelo GitHub. Cole uma nova." : "Sessões do Claude Code"; $("#sub").className = motivo ? "ruim" : "";
+}
+function mostrarApp() {
+  $("#cfg").hidden = true; $("#app").hidden = false; $("#acoes").hidden = false;
+  if (!carregou) { esqueletoPC(); esqueletoLista(); }
+  carregar();
+}
 $("#salvar").onclick = () => { const v = $("#tok").value.trim(); if (v) { setTok(v); $("#tok").value = ""; mostrarApp(); } };
 $("#tok").onkeydown = e => { if (e.key === "Enter") $("#salvar").click(); };
-$("#trocar").onclick = mostrarCfg;
-$("#recarregar").onclick = carregar;
+$("#trocar").onclick = () => mostrarCfg();
+$("#recarregar").onclick = () => carregar();
 setInterval(() => { if (!document.hidden && !$("#app").hidden) carregar(); }, 15000);
 $("#nova").onclick = nova;
 $("#filtro").oninput = desenhar;
 document.addEventListener("visibilitychange", () => { if (!document.hidden && !$("#app").hidden) carregar(); });
+addEventListener("scroll", () => $("#topo").classList.toggle("rolou", scrollY > 4), { passive: true });
 getTok() ? mostrarApp() : mostrarCfg();
 </script>
 </body>
