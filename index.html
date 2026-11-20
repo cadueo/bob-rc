@@ -29,11 +29,17 @@
 html,body{margin:0;background:var(--bg);color:var(--tx)}
 body{font:16px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;
   padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 32px);max-width:720px;margin:0 auto}
-header{display:flex;align-items:center;gap:12px;margin:8px 0 18px}
+header{display:flex;align-items:center;gap:12px;margin:8px 0 18px;flex-wrap:wrap}
 header img{width:44px;height:44px;border-radius:11px;box-shadow:var(--sh)}
 header h1{font-size:24px;line-height:1.1;margin:0;letter-spacing:-.02em}
 header .sub{color:var(--mut);font-size:13px;margin-top:2px}
-header .acoes{margin-left:auto;display:flex;gap:6px}
+header .acoes{margin-left:auto;display:flex;gap:6px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;padding:5px 9px;border-radius:999px;border:1px solid var(--bd);background:var(--card);color:var(--tx);white-space:nowrap}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--mut);flex:none}
+.chip.ok i{background:var(--ok)}.chip.av i{background:var(--warn)}.chip.ruim{background:var(--errbg);border-color:transparent;color:var(--err)}.chip.ruim i{background:var(--err)}
+#sub.ruim{color:var(--err);font-weight:600}
+@media (max-width:560px){header .acoes{width:100%;margin-left:0}.chips{justify-content:flex-start;flex:1}}
 .ib{width:40px;height:40px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);display:grid;place-items:center;cursor:pointer}
 .ib svg{width:20px;height:20px}.ib.gira svg{animation:g 1s linear infinite}@keyframes g{to{transform:rotate(360deg)}}
 .busca{position:relative;margin-bottom:14px}
@@ -72,6 +78,7 @@ footer button{background:none;border:0;color:var(--mut);font:inherit;font-size:1
   <img src="icon-192.png" alt="">
   <div><h1>Bob RC</h1><div class="sub" id="sub">Sessões do Claude no PC</div></div>
   <div class="acoes" id="acoes" hidden>
+    <div class="chips" id="chips"></div>
     <button class="ib" id="recarregar" aria-label="Atualizar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button>
   </div>
 </header>
@@ -149,6 +156,22 @@ function cartao(s) {
   return c;
 }
 
+function chips(m, velho) {
+  const el = $("#chips"); el.innerHTML = "";
+  const add = (txt, cls, dica) => { const c = document.createElement("span"); c.className = "chip " + cls; c.title = dica;
+    c.innerHTML = "<i></i>"; c.append(txt); el.append(c); };
+  if (velho) { add("PC fora do ar", "ruim", "O PC parou de mandar notícia: desligado, sem internet ou vigia parado"); return; }
+  if (m.bateria != null) add((m.tomada === false ? "Bateria " : "Tomada ") + m.bateria + "%",
+    m.tomada === false ? "ruim" : "ok", m.tomada === false ? "Fora da tomada: a energia pode ter caído" : "Na tomada");
+  add(m.rede_ms == null ? "Rede Marilan fora" : "Rede " + m.rede_ms + " ms", m.rede_ms == null ? "ruim" : m.rede_ms > 1500 ? "av" : "ok",
+    m.rede_ms == null ? "O PC não alcança o SAP: rede interna fora" : "Tempo para alcançar o SAP PRD");
+  if (m.cpu != null) add("CPU " + m.cpu + "% · Mem " + m.mem + "%", (m.cpu >= 90 || m.mem >= 90) ? "av" : "ok", "Uso do processador e da memória");
+  if (m.ligado_min != null) { const h = m.ligado_min / 60;
+    add("Ligado " + (m.ligado_min < 60 ? m.ligado_min + " min" : h < 48 ? Math.round(h) + " h" : Math.round(h / 24) + " d"),
+      m.ligado_min < 30 ? "av" : "ok", m.ligado_min < 30 ? "O PC reiniciou há pouco" : "Tempo desde o último reinício"); }
+  if (m.vscode === false) add("VS Code fora", "ruim", "O motor do VS Code não responde: o VS Code está fechado?");
+}
+
 function desenhar() {
   const f = $("#filtro").value.trim().toLowerCase(), el = $("#lista");
   const vis = sessoes.filter(x => !f || x.titulo.toLowerCase().includes(f));
@@ -167,7 +190,10 @@ async function carregar() {
   try {
     const d = JSON.parse(await gh("GET", "/contents/sessoes.json", null, true));
     sessoes = d.sessoes || [];
-    $("#sub").textContent = "Lista do PC " + haQuanto(d.atualizado);
+    const velho = (Date.now() - new Date(d.atualizado)) / 60000 > 2.5;
+    $("#sub").textContent = velho ? "PC sem sinal " + haQuanto(d.atualizado) : "PC respondeu " + haQuanto(d.atualizado);
+    $("#sub").className = "sub" + (velho ? " ruim" : "");
+    chips(d.maquina || {}, velho);
     desenhar();
   } catch (e) {
     $("#sub").textContent = e.message;
