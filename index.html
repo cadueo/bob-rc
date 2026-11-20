@@ -44,6 +44,7 @@ header .acoes{margin-left:auto;display:flex;gap:6px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin:8px 0;box-shadow:var(--sh);display:flex;gap:12px;align-items:center}
 .pt{width:10px;height:10px;border-radius:50%;flex:none;background:var(--bd)}
 .pt.vs{background:var(--ok);box-shadow:0 0 0 4px var(--okbg)}.pt.tm{background:var(--warn);box-shadow:0 0 0 4px var(--warnbg)}
+.pt.cai{background:var(--err);box-shadow:0 0 0 4px var(--errbg)}
 .card .t{flex:1;min-width:0}
 .nome{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .meta{color:var(--mut);font-size:13px;margin-top:1px}
@@ -120,15 +121,18 @@ function haQuanto(iso) {
 
 function cartao(s) {
   const c = document.createElement("div"); c.className = "card";
-  const pt = document.createElement("div"); pt.className = "pt" + (s.processo ? (s.onde === "claude-vscode" ? " vs" : " tm") : "");
+  const ligado = s.processo && s.rc === "ligado", caido = s.processo && s.rc === "caido";
+  const pt = document.createElement("div"); pt.className = "pt" + (!s.processo ? "" : caido ? " cai" : s.onde === "claude-vscode" ? " vs" : " tm");
   const t = document.createElement("div"); t.className = "t";
   const n = document.createElement("div"); n.className = "nome"; n.textContent = s.titulo;
   const m = document.createElement("div"); m.className = "meta";
-  m.textContent = (s.processo ? (s.onde === "claude-vscode" ? "Rodando no VS Code" : "Rodando no terminal") : "Parada") + " · " + haQuanto(s.ultima);
+  const onde = s.onde === "claude-vscode" ? "VS Code" : "terminal";
+  m.textContent = (!s.processo ? "Parada" : ligado ? "RC ligado · " + onde : caido ? "RC caído · " + onde : "Rodando no " + onde) + " · " + haQuanto(s.ultima);
   const r = document.createElement("div"); r.className = "msg";
   t.append(n, m, r);
   const b = document.createElement("button"); b.className = "bt"; b.textContent = "Acordar";
   if (!s.pode_acordar) { b.disabled = true; b.textContent = "No terminal"; }
+  else if (ligado) { b.className = "bt sec"; b.textContent = "Conectada"; }
   if (pendentes[s.id]) { b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id]; }
   b.onclick = () => acordar(s, b, r);
   c.append(pt, t, b);
@@ -162,7 +166,8 @@ async function carregar() {
 }
 
 async function acordar(s, b, r) {
-  if (s.processo && !confirm(`"${s.titulo}" está rodando no VS Code.\n\nAcordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
+  if (s.processo && s.rc === "ligado" && !confirm(`"${s.titulo}" já está com o RC ligado.\n\nSó vale reiniciar se ela não aparecer no app do Claude. Reiniciar mesmo assim?`)) return;
+  else if (s.processo && s.rc !== "ligado" && !confirm(`"${s.titulo}" está rodando no VS Code.\n\nAcordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
   b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id] = "Pedido enviado ao PC…";
   try {
     const is = await gh("POST", "/issues", { title: "acordar " + s.id, body: s.titulo });
