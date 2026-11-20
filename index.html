@@ -190,7 +190,10 @@ async function pedido(titulo, chave, r, b, msgs) {
         delete pendentes[chave];
         r.className = "msg on " + (ok ? "ok" : "err"); r.textContent = ok ? msgs.ok : txt;
         if (ok) toast(msgs.toast);
-        if (b) b.disabled = false; setTimeout(carregar, 4000); return;
+        if (b) b.disabled = false;
+        carregar(); setTimeout(carregar, 5000); setTimeout(carregar, 15000);
+        setTimeout(() => { if (r.textContent === (ok ? msgs.ok : txt)) r.className = "msg"; }, ok ? 8000 : 20000);
+        return;
       }
       r.textContent = pendentes[chave] = `${msgs.andando} ${k * 4} s`;
     }
@@ -229,6 +232,7 @@ $("#salvar").onclick = () => { const v = $("#tok").value.trim(); if (v) { setTok
 $("#tok").onkeydown = e => { if (e.key === "Enter") $("#salvar").click(); };
 $("#trocar").onclick = mostrarCfg;
 $("#recarregar").onclick = carregar;
+setInterval(() => { if (!document.hidden && !$("#app").hidden) carregar(); }, 15000);
 $("#nova").onclick = nova;
 $("#filtro").oninput = desenhar;
 document.addEventListener("visibilitychange", () => { if (!document.hidden && !$("#app").hidden) carregar(); });
