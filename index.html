@@ -53,6 +53,9 @@ header .acoes{margin-left:auto;display:flex;gap:6px}
 .bt{font:inherit;font-weight:600;font-size:15px;border:0;border-radius:12px;padding:10px 16px;background:var(--ac);color:var(--acx);cursor:pointer;white-space:nowrap;min-width:92px}
 .bt:active{background:var(--ac2)}.bt:disabled{opacity:.45;cursor:default}
 .bt.sec{background:transparent;color:var(--mut);border:1px solid var(--bd);font-weight:500}
+.col{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+.lk{font:inherit;font-size:13px;background:none;border:0;color:var(--mut);cursor:pointer;padding:2px;text-decoration:underline}
+.nova{display:flex;align-items:center;gap:10px;margin:0 0 6px}.nova .bt{flex:none}.nova .msg{margin:0;flex:1}
 .vazio{color:var(--mut);text-align:center;padding:30px 10px}
 .cfg{background:var(--card);border:1px solid var(--bd);border-radius:20px;padding:22px;box-shadow:var(--sh);margin-top:20px}
 .cfg h2{margin:0 0 6px;font-size:20px}.cfg p{color:var(--mut);margin:0 0 16px;font-size:14px}
@@ -85,6 +88,7 @@ footer button{background:none;border:0;color:var(--mut);font:inherit;font-size:1
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
     <input id="filtro" placeholder="Buscar sessão" autocomplete="off">
   </div>
+  <div class="nova"><button class="bt sec" id="nova">+ Nova sessão</button><div class="msg" id="novamsg"></div></div>
   <div id="lista"></div>
   <footer><button id="trocar">Trocar chave de acesso</button></footer>
 </main>
@@ -130,12 +134,18 @@ function cartao(s) {
   m.textContent = (!s.processo ? "Parada" : ligado ? "RC ligado · " + onde : caido ? "RC caído · " + onde : "Rodando no " + onde) + " · " + haQuanto(s.ultima);
   const r = document.createElement("div"); r.className = "msg";
   t.append(n, m, r);
+  if (s.auto) m.textContent += " · religada sozinha às " + s.auto;
   const b = document.createElement("button"); b.className = "bt"; b.textContent = "Acordar";
   if (!s.pode_acordar) { b.disabled = true; b.textContent = "No terminal"; }
   else if (ligado) { b.className = "bt sec"; b.textContent = "Conectada"; }
   if (pendentes[s.id]) { b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id]; }
   b.onclick = () => acordar(s, b, r);
-  c.append(pt, t, b);
+  const col = document.createElement("div"); col.className = "col"; col.append(b);
+  if (s.processo && s.onde === "claude-vscode") {
+    const f = document.createElement("button"); f.className = "lk"; f.textContent = "Fechar";
+    f.onclick = () => fechar(s, f, r); col.append(f);
+  }
+  c.append(pt, t, col);
   return c;
 }
 
@@ -165,12 +175,11 @@ async function carregar() {
   } finally { bt.classList.remove("gira"); }
 }
 
-async function acordar(s, b, r) {
-  if (s.processo && s.rc === "ligado" && !confirm(`"${s.titulo}" já está com o RC ligado.\n\nSó vale reiniciar se ela não aparecer no app do Claude. Reiniciar mesmo assim?`)) return;
-  else if (s.processo && s.rc !== "ligado" && !confirm(`"${s.titulo}" está rodando no VS Code.\n\nAcordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
-  b.disabled = true; r.className = "msg on wait"; r.textContent = pendentes[s.id] = "Pedido enviado ao PC…";
+async function pedido(titulo, chave, r, b, msgs) {
+  if (b) b.disabled = true;
+  r.className = "msg on wait"; r.textContent = pendentes[chave] = "Pedido enviado ao PC…";
   try {
-    const is = await gh("POST", "/issues", { title: "acordar " + s.id, body: s.titulo });
+    const is = await gh("POST", "/issues", { title: titulo, body: msgs.corpo || "" });
     for (let k = 1; k <= 60; k++) {
       await new Promise(x => setTimeout(x, 4000));
       const i = await gh("GET", "/issues/" + is.number);
@@ -178,17 +187,40 @@ async function acordar(s, b, r) {
         const cs = await gh("GET", `/issues/${is.number}/comments`);
         const txt = cs.length ? cs[cs.length - 1].body : "concluído";
         const ok = /^OK/.test(txt);
-        delete pendentes[s.id];
-        r.className = "msg on " + (ok ? "ok" : "err");
-        r.textContent = ok ? "Acordada. Abra no app do Claude." : txt;
-        if (ok) toast(`"${s.titulo}" acordada`);
-        b.disabled = false; setTimeout(carregar, 4000); return;
+        delete pendentes[chave];
+        r.className = "msg on " + (ok ? "ok" : "err"); r.textContent = ok ? msgs.ok : txt;
+        if (ok) toast(msgs.toast);
+        if (b) b.disabled = false; setTimeout(carregar, 4000); return;
       }
-      r.textContent = pendentes[s.id] = `O PC está acordando a sessão… ${k * 4} s`;
+      r.textContent = pendentes[chave] = `${msgs.andando} ${k * 4} s`;
     }
     r.className = "msg on err"; r.textContent = "O PC não respondeu em 4 min. O vigia está rodando?";
   } catch (e) { r.className = "msg on err"; r.textContent = e.message; }
-  delete pendentes[s.id]; b.disabled = false;
+  delete pendentes[chave]; if (b) b.disabled = false;
+}
+
+function acordar(s, b, r) {
+  if (s.processo && s.rc === "ligado" && !confirm(`"${s.titulo}" já está com o RC ligado.
+
+Só vale reiniciar se ela não aparecer no app do Claude. Reiniciar mesmo assim?`)) return;
+  if (s.processo && s.rc !== "ligado" && !confirm(`"${s.titulo}" está rodando no VS Code.
+
+Acordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
+  pedido("acordar " + s.id, s.id, r, b, { corpo: s.titulo, ok: "Acordada. Abra no app do Claude.", toast: `"${s.titulo}" acordada`, andando: "O PC está acordando a sessão…" });
+}
+
+function fechar(s, b, r) {
+  if (!confirm(`Fechar "${s.titulo}" no VS Code?
+
+O processo é encerrado e a aba fecha. A conversa fica salva em "Conversas recentes" para reabrir depois.`)) return;
+  pedido("fechar " + s.id, s.id, r, b, { corpo: s.titulo, ok: "Fechada. A conversa continua salva.", toast: `"${s.titulo}" fechada`, andando: "O PC está fechando a aba…" });
+}
+
+function nova() {
+  if (!confirm(`Abrir uma sessão nova no VS Code do PC?
+
+Ela nasce com o RC ligado e aparece no app do Claude.`)) return;
+  pedido("nova", "_nova", $("#novamsg"), $("#nova"), { ok: "Sessão nova aberta. Procure no app do Claude.", toast: "Sessão nova aberta", andando: "O PC está abrindo a sessão…" });
 }
 
 function mostrarCfg() { $("#cfg").hidden = false; $("#app").hidden = true; $("#acoes").hidden = true; $("#sub").textContent = "Sessões do Claude no PC"; }
@@ -197,6 +229,7 @@ $("#salvar").onclick = () => { const v = $("#tok").value.trim(); if (v) { setTok
 $("#tok").onkeydown = e => { if (e.key === "Enter") $("#salvar").click(); };
 $("#trocar").onclick = mostrarCfg;
 $("#recarregar").onclick = carregar;
+$("#nova").onclick = nova;
 $("#filtro").oninput = desenhar;
 document.addEventListener("visibilitychange", () => { if (!document.hidden && !$("#app").hidden) carregar(); });
 getTok() ? mostrarApp() : mostrarCfg();
