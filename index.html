@@ -147,6 +147,10 @@ svg{display:block;flex:none}
   #nova{position:fixed;z-index:30;right:max(16px,calc(env(safe-area-inset-right) + 16px));bottom:calc(env(safe-area-inset-bottom) + 18px);
     min-height:54px;padding:0 22px 0 18px;border-radius:999px;font-size:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 10px 28px rgba(208,88,47,.38),0 2px 6px rgba(0,0,0,.15)}
   #nova:disabled{opacity:.7}
+  /* no celular vira um círculo só com o "+", para não tapar os botões dos cartões */
+  #nova{width:58px;height:58px;min-height:58px;padding:0;justify-content:center;border-radius:50%}
+  #nova span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  #nova svg{width:26px;height:26px;margin:0}
   #app{padding-bottom:calc(env(safe-area-inset-bottom) + 96px)}
 }
 
@@ -257,7 +261,7 @@ footer small{color:var(--mut);font-size:12px}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
         <input id="filtro" type="search" placeholder="Buscar sessão" autocomplete="off" aria-label="Buscar sessão">
       </div>
-      <button class="bt pri" id="nova"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>Nova sessão</span></button>
+      <button class="bt pri" id="nova" aria-label="Nova sessão" title="Nova sessão"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>Nova sessão</span></button>
     </div>
     <div class="msg" id="novamsg"></div>
 
