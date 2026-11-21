@@ -125,6 +125,8 @@ svg{display:block;flex:none}
 .busca input::placeholder{color:var(--mut)}
 .busca input:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--ac-soft)}
 .busca input::-webkit-search-cancel-button{-webkit-appearance:none}
+.filtrando{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;padding:10px 10px 10px 16px;border-radius:14px;background:var(--ac-soft);color:var(--tx);font-weight:600;font-size:14px;border:1px solid var(--ac)}
+.filtrando .bt{min-height:36px;padding:0 14px;white-space:nowrap;background:var(--surface);border:1px solid var(--bd2);color:var(--tx)}
 .busca svg{position:absolute;left:14px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--mut);pointer-events:none}
 #novamsg{margin-top:12px}
 
@@ -498,6 +500,12 @@ function desenhar() {
   if (!vis.length) {
     const v = el("div", "vazio"); v.append(ic("vazio"), el("div", null, f ? "Nenhuma sessão com “" + $("#filtro").value.trim() + "”." : "Nenhuma sessão encontrada."));
     lista.append(v); return;
+  }
+  if (f) {   // filtro ligado nunca pode passar por "lista sumiu" (Dú, 21.11.2026)
+    const fx = el("div", "filtrando"), lb = el("button", "bt", "Mostrar todas");
+    fx.append(el("span", null, "Mostrando " + vis.length + " de " + sessoes.length + " — busca “" + $("#filtro").value.trim() + "”"), lb);
+    lb.onclick = () => { $("#filtro").value = ""; desenhar(); };
+    lista.append(fx);
   }
   const grupos = [["No VS Code agora", vis.filter(s => s.processo)], ["Conversas recentes", vis.filter(s => !s.processo)]];
   for (const [titulo, itens] of grupos) {
