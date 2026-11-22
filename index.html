@@ -180,6 +180,9 @@ svg{display:block;flex:none}
 .st-cai{border-color:color-mix(in srgb,var(--err) 28%,transparent)}
 .st-term .sico,.st-term .badge{background:var(--warn-soft);color:var(--warn)}
 .acts{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:auto;flex-wrap:wrap}
+.bt.so-ico{width:44px;padding:0;flex:none;margin-right:auto;background:transparent;border-color:var(--bd2);color:var(--mut)}
+.bt.so-ico.on{background:var(--ok-soft);border-color:transparent;color:var(--ok)}
+@media (hover:hover){.bt.so-ico:hover:not(:disabled){background:var(--neu-soft);color:var(--tx)}.bt.so-ico.on:hover:not(:disabled){background:color-mix(in srgb,var(--ok) 18%,transparent);color:var(--ok)}}
 
 /* ---------- mensagens ---------- */
 .msg{display:none;align-items:flex-start;gap:9px;font-size:13.5px;line-height:1.4;padding:10px 12px;border-radius:12px;overflow-wrap:anywhere}
@@ -470,9 +473,10 @@ function cartao(s) {
   }
   if (s.processo && s.onde === "claude-vscode") {
     const aberto = MAQ.chrome === true;
-    const cb = botao(aberto ? "neutro" : "ghost", "chrome", aberto ? "Chrome ligado" : "Chrome");
-    cb.title = aberto ? "O Chrome do PC está aberto: a sessão já enxerga o navegador" : "Abrir o Chrome do PC para a sessão usar o navegador";
-    cb.onclick = () => chrome(s); acts.append(cb); bs.push(cb);
+    const cb = el("button", "bt so-ico" + (aberto ? " on" : "")); cb.append(ic("chrome"));
+    cb.title = aberto ? "Chrome do PC ligado: a sessão já enxerga o navegador" : "Abrir o Chrome do PC para a sessão usar o navegador";
+    cb.setAttribute("aria-label", aberto ? "Chrome ligado" : "Abrir o Chrome");
+    cb.onclick = () => chrome(s); acts.prepend(cb); bs.push(cb);
   }
   let b;
   if (!s.pode_acordar) { b = botao("mudo", "term", "No terminal"); b.dataset.fixo = "1"; }
