@@ -290,7 +290,9 @@ const nomeDe = s => String(s.titulo || "Sessão " + s.id);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 
 /* ---------- ícones (texto fixo, nunca dado do JSON) ---------- */
+let MAQ = {};
 const ICON = {
+  chrome: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5h8.5M8.97 13.75 4.7 6.4M15.03 13.75 10.8 21"/>',
   laptop: '<rect x="4" y="4" width="16" height="11" rx="2"/><path d="M2 19h20"/>',
   plug: '<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>',
   bat: '<rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2"/><path d="M6 10v4"/>',
@@ -382,6 +384,7 @@ function erroPC(msg) {
 
 function desenharPC(d, velho) {
   const m = d.maquina || {}, mets = [], alertas = [];
+  MAQ = m;
   if (m.bateria != null || m.tomada != null) {
     const bat = typeof m.bateria === "number" ? "Bateria " + Math.round(m.bateria) + "%" : "";
     if (m.tomada === false) {
@@ -464,6 +467,12 @@ function cartao(s) {
   if (s.processo && s.onde === "claude-vscode") {
     const f = botao("ghost", "x", "Fechar"); f.title = "Fechar a aba no VS Code";
     f.onclick = () => fechar(s); acts.append(f); bs.push(f);
+  }
+  if (s.processo && s.onde === "claude-vscode") {
+    const aberto = MAQ.chrome === true;
+    const cb = botao(aberto ? "neutro" : "ghost", "chrome", aberto ? "Chrome ligado" : "Chrome");
+    cb.title = aberto ? "O Chrome do PC está aberto: a sessão já enxerga o navegador" : "Abrir o Chrome do PC para a sessão usar o navegador";
+    cb.onclick = () => chrome(s); acts.append(cb); bs.push(cb);
   }
   let b;
   if (!s.pode_acordar) { b = botao("mudo", "term", "No terminal"); b.dataset.fixo = "1"; }
@@ -595,6 +604,14 @@ Só vale reiniciar se ela não aparecer no app do Claude. Reiniciar mesmo assim?
 
 Acordar reinicia o processo dela na mesma aba. A conversa fica salva. Continuar?`)) return;
   pedido("acordar " + s.id, s.id, { corpo: s.titulo || "", ok: "Acordada. Abra no app do Claude.", toast: `"${tit}" acordada`, andando: "O PC está acordando a sessão…" });
+}
+
+function chrome(s) {
+  const tit = nomeDe(s);
+  if (MAQ.chrome === true && !confirm(`O Chrome do PC já está aberto.
+
+Se "${tit}" não enxerga o navegador, peça a ela para listar os navegadores conectados. Conferir mesmo assim?`)) return;
+  pedido("chrome " + s.id, s.id, { ok: "Chrome aberto no PC. A extensão conecta em até 1 min.", toast: "Chrome do PC aberto", andando: "O PC está abrindo o Chrome…" });
 }
 
 function fechar(s) {
