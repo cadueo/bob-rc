@@ -202,6 +202,11 @@ svg{display:block;flex:none}
 @keyframes brilho{from{background-position:100% 0}to{background-position:0 0}}
 
 /* ---------- rodapé ---------- */
+.login{border-color:color-mix(in srgb,var(--ac) 45%,transparent);box-shadow:0 0 0 3px var(--ac-soft),var(--sh1);margin:0 0 14px}
+.login .sico{background:var(--ac-soft);color:var(--ac)}
+.login .sem{font-size:13.5px;color:var(--warn);background:var(--warn-soft);padding:9px 12px;border-radius:11px;line-height:1.35}
+#sitesbox{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:4px 16px 0}
+#sitesbox .bt{min-height:38px;font-size:14px;background:var(--surface);border:1px solid var(--bd2);color:var(--tx)}
 footer{display:flex;flex-direction:column;align-items:center;gap:6px;margin:40px 0 0;padding-bottom:calc(env(safe-area-inset-bottom) + 28px)}
 footer .bt{background:transparent;color:var(--mut);font-weight:550;font-size:14px}
 @media (hover:hover){footer .bt:hover{color:var(--tx);background:var(--neu-soft)}}
@@ -261,6 +266,8 @@ footer small{color:var(--mut);font-size:12px}
   <main id="app" hidden>
     <section class="pc carregando" id="pc" aria-live="polite"></section>
 
+    <div id="logins"></div>
+
     <div class="ferr">
       <div class="busca">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -274,6 +281,8 @@ footer small{color:var(--mut);font-size:12px}
 
     <footer>
       <button class="bt" id="trocar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14.5 8.5l2 2"/></svg>Trocar chave de acesso</button>
+      <button class="bt" id="entrarsite"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14.5 8.5l2 2"/></svg>Entrar num site</button>
+      <div id="sitesbox" hidden></div>
       <small>Bob RC · Remote Control do Claude Code</small>
     </footer>
   </main>
@@ -295,6 +304,7 @@ if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catc
 /* ---------- ícones (texto fixo, nunca dado do JSON) ---------- */
 let MAQ = {};
 const ICON = {
+  chave: '<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 9.3-9.3M17 6l3 3M14.5 8.5l2 2"/>',
   chrome: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 8.5h8.5M8.97 13.75 4.7 6.4M15.03 13.75 10.8 21"/>',
   laptop: '<rect x="4" y="4" width="16" height="11" rx="2"/><path d="M2 19h20"/>',
   plug: '<path d="M9 2v5M15 2v5M6 7h12v4a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>',
@@ -438,19 +448,50 @@ As sessões que estavam abertas são reabertas na mesma conversa.`)) pedido("abr
     ui["_vscode"] = { r: msg, bs: [bt] }; pintar("_vscode");
   }
   if (mets.length) { const g = el("div", "mets"); g.append(...mets); pc.append(g); }
-  // Botão "Entrar no site" (Dú, 25.11.2026): o PC roda o auth-refresh do Dú e o Bob só carrega a sessão gravada
-  for (const s of (d.sites || [])) {
-    if (velho) break;
-    const chave = "_site_" + s.id, linha = el("div", "vscode-acao"), msg = el("div", "msg");
-    const bt = el("button", "bt", "Entrar: " + s.titulo);
-    const ult = s.hora ? (s.ok ? "último login ok " : "último login falhou ") + haQuanto(s.hora) : "";
-    bt.title = ult;
-    bt.onclick = () => { if (confirm(`Entrar em ${s.titulo} no PC?
+  desenharLogin(d, velho);
+}
 
-O PC preenche o login com as tuas variáveis e grava a sessão para o Bob usar.`)) pedido("login " + s.id, chave, { ok: `${s.titulo}: sessão pronta. Pode avisar o Bob.`, toast: "Login feito", andando: "O PC está entrando no site…" }); };
-    linha.append(bt, msg); if (ult) linha.append(el("small", null, ult)); pc.append(linha);
-    ui[chave] = { r: msg, bs: [bt] }; pintar(chave);
+
+/* ---------- login nos sites (Dú, 25.11.2026) ----------
+   Cartão só quando o Bob pede (pedir_login.mjs). O toque do Dú cria a issue "login <host>" e o PC roda o script dele,
+   que acha a senha pelas variáveis do Windows. O Bob nunca toca aqui. */
+let SITES = [];
+function entrarSite(host, titulo, chave) {
+  pedido("login " + host, chave, { ok: `${titulo}: sessão pronta. O Bob já pode usar.`, toast: "Login feito", andando: "O PC está entrando no site…" });
+}
+function desenharLogin(d, velho) {
+  SITES = d.sites || [];
+  const box = $("#logins"); box.replaceChildren();
+  if (velho) return;
+  for (const p of (d.pedidos_login || [])) {
+    const chave = "_login_" + p.host, c = el("article", "card login");
+    const top = el("div", "card-top"), sico = el("div", "sico"); sico.append(ic("chave"));
+    const t = el("div", "t");
+    t.append(el("h3", "nome", "Bob precisa entrar em " + p.titulo));
+    t.append(el("div", "meta", [p.motivo, haQuanto(p.hora)].filter(Boolean).join(" · ")));
+    top.append(sico, t); c.append(top);
+    if (p.sem_senha) c.append(el("div", "sem", p.sem_senha));
+    const r = el("div", "msg"), acts = el("div", "acts"), b = botao("pri", "chave", "Entrar");
+    b.onclick = () => entrarSite(p.host, p.titulo, chave);
+    acts.append(b); c.append(r, acts); box.append(c);
+    ui[chave] = { r, bs: [b] }; pintar(chave);
   }
+}
+function listaSites() {
+  const box = $("#sitesbox");
+  if (!box.hidden) { box.hidden = true; return; }
+  box.replaceChildren();
+  if (!SITES.length) box.append(el("small", null, "Nenhum site conhecido ainda. Eles aparecem aqui depois do 1º login pedido pelo Bob."));
+  for (const s of SITES) {
+    const chave = "_site_" + s.id, b = el("button", "bt", s.titulo);
+    b.title = s.hora ? (s.ok ? "último login ok " : "último login falhou ") + haQuanto(s.hora) : "ainda sem login";
+    b.onclick = () => { if (confirm(`Entrar em ${s.titulo} no PC?
+
+O PC preenche o login com as tuas variáveis e grava a sessão para o Bob usar.`)) entrarSite(s.id, s.titulo, chave); };
+    const m = el("div", "msg"); ui[chave] = { r: m, bs: [b] };
+    box.append(b, m);
+  }
+  box.hidden = false;
 }
 
 /* ---------- sessões ---------- */
@@ -521,7 +562,7 @@ function desenhar() {
   if (!carregou) { esqueletoLista(); return; }
   const f = $("#filtro").value.trim().toLowerCase(), lista = $("#lista");
   const vis = sessoes.filter(x => !f || nomeDe(x).toLowerCase().includes(f));
-  for (const k in ui) if (k !== "_nova") delete ui[k];
+  for (const k in ui) if (k[0] !== "_") delete ui[k];
   lista.replaceChildren();
   if (!vis.length) {
     const v = el("div", "vazio"); v.append(ic("vazio"), el("div", null, f ? "Nenhuma sessão com “" + $("#filtro").value.trim() + "”." : "Nenhuma sessão encontrada."));
@@ -658,6 +699,7 @@ function mostrarApp() {
 $("#salvar").onclick = () => { const v = $("#tok").value.trim(); if (v) { setTok(v); $("#tok").value = ""; mostrarApp(); } };
 $("#tok").onkeydown = e => { if (e.key === "Enter") $("#salvar").click(); };
 $("#trocar").onclick = () => mostrarCfg();
+$("#entrarsite").onclick = listaSites;
 $("#recarregar").onclick = () => carregar();
 setInterval(() => { if (!document.hidden && !$("#app").hidden) carregar(); }, 15000);
 $("#nova").onclick = nova;
