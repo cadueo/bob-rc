@@ -438,6 +438,19 @@ As sessões que estavam abertas são reabertas na mesma conversa.`)) pedido("abr
     ui["_vscode"] = { r: msg, bs: [bt] }; pintar("_vscode");
   }
   if (mets.length) { const g = el("div", "mets"); g.append(...mets); pc.append(g); }
+  // Botão "Entrar no site" (Dú, 25.11.2026): o PC roda o auth-refresh do Dú e o Bob só carrega a sessão gravada
+  for (const s of (d.sites || [])) {
+    if (velho) break;
+    const chave = "_site_" + s.id, linha = el("div", "vscode-acao"), msg = el("div", "msg");
+    const bt = el("button", "bt", "Entrar: " + s.titulo);
+    const ult = s.hora ? (s.ok ? "último login ok " : "último login falhou ") + haQuanto(s.hora) : "";
+    bt.title = ult;
+    bt.onclick = () => { if (confirm(`Entrar em ${s.titulo} no PC?
+
+O PC preenche o login com as tuas variáveis e grava a sessão para o Bob usar.`)) pedido("login " + s.id, chave, { ok: `${s.titulo}: sessão pronta. Pode avisar o Bob.`, toast: "Login feito", andando: "O PC está entrando no site…" }); };
+    linha.append(bt, msg); if (ult) linha.append(el("small", null, ult)); pc.append(linha);
+    ui[chave] = { r: msg, bs: [bt] }; pintar(chave);
+  }
 }
 
 /* ---------- sessões ---------- */
